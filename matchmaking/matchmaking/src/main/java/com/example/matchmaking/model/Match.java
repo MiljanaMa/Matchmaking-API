@@ -11,16 +11,26 @@ public class Match {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", unique = true, nullable = false)
     private UUID id;
-    @Column(name = "team1_id", nullable = false)
-    private UUID team1Id;
-    @Column(name = "team2_id", nullable = false)
-    private UUID team2Id;
-    @Column(name = "winning_team", nullable = true)
-    private UUID winningTeam;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team1_id", nullable = false, referencedColumnName = "id")
+    private Team team1;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team2_id", nullable = false, referencedColumnName = "id")
+    private Team team2;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "winning_team", referencedColumnName = "id", nullable = true)
+    private Team winningTeam;
+
     @Column(name = "duration", nullable = false)
     private int duration;
 
-    public Match() {
+    public Match(Team team1, Team team2, Team winningTeam, int duration) {
+        this.team1 = team1;
+        this.team2 = team2;
+        this.duration = duration;
+        this.winningTeam = winningTeam;
     }
 
     public UUID getId() {
@@ -31,27 +41,27 @@ public class Match {
         this.id = id;
     }
 
-    public UUID getTeam1Id() {
-        return team1Id;
+    public Team getTeam1() {
+        return team1;
     }
 
-    public void setTeam1Id(UUID team1Id) {
-        this.team1Id = team1Id;
+    public void setTeam1(Team team1) {
+        this.team1 = team1;
     }
 
-    public UUID getTeam2Id() {
-        return team2Id;
+    public Team getTeam2() {
+        return team2;
     }
 
-    public void setTeam2Id(UUID team2Id) {
-        this.team2Id = team2Id;
+    public void setTeam2(Team team2) {
+        this.team2 = team2;
     }
 
-    public UUID getWinningTeam() {
+    public Team getWinningTeam() {
         return winningTeam;
     }
 
-    public void setWinningTeam(UUID winningTeam) {
+    public void setWinningTeam(Team winningTeam) {
         this.winningTeam = winningTeam;
     }
 

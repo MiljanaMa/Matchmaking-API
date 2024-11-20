@@ -1,7 +1,6 @@
 package com.example.matchmaking.service;
 
 import com.example.matchmaking.dto.MatchRequestDto;
-import com.example.matchmaking.mapper.DtoUtils;
 import com.example.matchmaking.model.EloCalculator;
 import com.example.matchmaking.model.Match;
 import com.example.matchmaking.model.Player;
@@ -13,7 +12,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -38,10 +36,20 @@ public class MatchService {
         double team2AverageElo = EloCalculator.getTeamAverageElo(team2);
         double team1Score = EloCalculator.getScoreRating(team1, match.getWinningTeamId());
         double team2Score = EloCalculator.getScoreRating(team2, match.getWinningTeamId());
+
+        Team winningTeam = determineWinningTeam(team1, team2, team1Score);
+
         updatePlayerStats(team1, match, team2AverageElo, team1Score);
         updatePlayerStats(team2, match, team1AverageElo, team2Score);
 
-        Match newMatch = (Match) new DtoUtils().convertToEntity(new Match(), match);
+        Match newMatch = new Match(team1, team2, winningTeam, match.getDuration());
+        matchRepository.save(newMatch);
+    }
+    private Team determineWinningTeam(Team team1, Team team2, double team1Score) {
+        if (team1Score == 0.5) {
+            return null;
+        }
+        return team1Score == 1.0 ? team1 : team2;
     }
     private Team getTeam(String teamId) throws Exception {
         return teamRepository.findById(UUID.fromString(teamId))

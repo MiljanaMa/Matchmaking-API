@@ -38,11 +38,11 @@ public class MatchRequestDto implements DtoEntity {
         this.winningTeamId = winningTeamId;
     }
 
-    public Integer getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(Integer duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 }
